@@ -33,6 +33,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -69,7 +70,7 @@ public class RDLauncher extends javax.swing.JFrame {
         save = new javax.swing.JButton();
         reload = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        memory = new javax.swing.JComboBox<>();
+        memory = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
         javapath = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -109,7 +110,7 @@ public class RDLauncher extends javax.swing.JFrame {
 
         jLabel1.setText("Оперативная память:");
 
-        memory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "64M", "128M", "256M", "512M", "1024M", "2048M", "3072M", "4096M" }));
+        memory.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "64M", "128M", "256M", "512M", "1024M", "2048M", "3072M", "4096M" }));
 
         jLabel4.setText("Путь к Java:");
 
@@ -269,6 +270,25 @@ public class RDLauncher extends javax.swing.JFrame {
             javapath.setText(System.getProperty("java.home") + separator + "bin" + separator + "java");
         }
         
+        // Унижаем макодрочеров
+        boolean mac = System.getProperty("os.name").startsWith("Mac");
+        if(mac) {
+            JOptionPane.showMessageDialog(rootPane, "MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.", "Ошибка / Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.");
+        } 
+        
+        boolean osx = System.getProperty("os.name").startsWith("OS");
+        if(mac) {
+            JOptionPane.showMessageDialog(rootPane, "MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.", "Ошибка / Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.");
+        } 
+        
+        // Пробуем загрузить файл справки
+        URL manualurl = RDLauncher.class.getResource("/manual.html");
+        try {
+            manual.setPage(manualurl);
+        } catch(IOException ex) {}
+        
         memory.setSelectedItem(cfgfile.getProperty("memory"));
     }//GEN-LAST:event_openwindow
 
@@ -326,8 +346,8 @@ public class RDLauncher extends javax.swing.JFrame {
         } catch(IOException ex) {}
         
         // Выставляем всё куда надо
-        boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-        if(isWindows) {
+        boolean javaexec = System.getProperty("os.name").startsWith("Windows");
+        if(javaexec) {
             javapath.setText(System.getProperty("java.home") + separator + "bin" + separator + "java.exe");
         } else {
             javapath.setText(System.getProperty("java.home") + separator + "bin" + separator + "java");
@@ -337,6 +357,8 @@ public class RDLauncher extends javax.swing.JFrame {
     }//GEN-LAST:event_reloadActionPerformed
 
     private void playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playActionPerformed
+        
+        // Creating dirs
         
         // Creating libraries dir
         File libsdir = new File(userdir + separator + ".rd-132211" + separator + "libraries");
@@ -358,6 +380,8 @@ public class RDLauncher extends javax.swing.JFrame {
             } catch(SecurityException se) {} if(result) {}
         }
         
+        // Downloading
+        
         // Download launchwrapper 1.6
         try {
             URL launchwrapper = new URL("https://libraries.minecraft.net/net/minecraft/launchwrapper/1.6/launchwrapper-1.6.jar");
@@ -376,8 +400,8 @@ public class RDLauncher extends javax.swing.JFrame {
         
         // Download rd-132211 client jar
         try {
-            URL launchwrapper = new URL("https://launcher.mojang.com/v1/objects/393e8d4b4d708587e2accd7c5221db65365e1075/client.jar");
-            ReadableByteChannel dwn0 = Channels.newChannel(launchwrapper.openStream());
+            URL rd = new URL("https://launcher.mojang.com/v1/objects/393e8d4b4d708587e2accd7c5221db65365e1075/client.jar");
+            ReadableByteChannel dwn0 = Channels.newChannel(rd.openStream());
             FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "rd-132211.jar");
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
@@ -392,8 +416,8 @@ public class RDLauncher extends javax.swing.JFrame {
         
         // Download ASM-all 5.2
         try {
-            URL launchwrapper = new URL("https://repo1.maven.org/maven2/org/ow2/asm/asm-all/5.2/asm-all-5.2.jar");
-            ReadableByteChannel dwn0 = Channels.newChannel(launchwrapper.openStream());
+            URL asm = new URL("https://repo1.maven.org/maven2/org/ow2/asm/asm-all/5.2/asm-all-5.2.jar");
+            ReadableByteChannel dwn0 = Channels.newChannel(asm.openStream());
             FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "asm-all-5.2.jar");
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
@@ -408,8 +432,8 @@ public class RDLauncher extends javax.swing.JFrame {
         
         // Download JOpt-simple 5.0.4
         try {
-            URL launchwrapper = new URL("https://repo1.maven.org/maven2/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar");
-            ReadableByteChannel dwn0 = Channels.newChannel(launchwrapper.openStream());
+            URL jopt = new URL("https://repo1.maven.org/maven2/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar");
+            ReadableByteChannel dwn0 = Channels.newChannel(jopt.openStream());
             FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "jopt-simple-5.0.4.jar");
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
@@ -424,8 +448,8 @@ public class RDLauncher extends javax.swing.JFrame {
         
         // Download LWJGL2 jar
         try {
-            URL launchwrapper = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl/lwjgl.jar");
-            ReadableByteChannel dwn0 = Channels.newChannel(launchwrapper.openStream());
+            URL lwjgl = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl/lwjgl.jar");
+            ReadableByteChannel dwn0 = Channels.newChannel(lwjgl.openStream());
             FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "lwjgl.jar");
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
@@ -440,8 +464,8 @@ public class RDLauncher extends javax.swing.JFrame {
         
         // Download LWJGL2 Util jar
         try {
-            URL launchwrapper = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl/lwjgl_util.jar");
-            ReadableByteChannel dwn0 = Channels.newChannel(launchwrapper.openStream());
+            URL util = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl/lwjgl_util.jar");
+            ReadableByteChannel dwn0 = Channels.newChannel(util.openStream());
             FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "lwjgl_util.jar");
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
@@ -456,8 +480,8 @@ public class RDLauncher extends javax.swing.JFrame {
         
         // Download JInput jar
         try {
-            URL launchwrapper = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl/jinput.jar");
-            ReadableByteChannel dwn0 = Channels.newChannel(launchwrapper.openStream());
+            URL jinput = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl/jinput.jar");
+            ReadableByteChannel dwn0 = Channels.newChannel(jinput.openStream());
             FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "jinput.jar");
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
@@ -470,13 +494,134 @@ public class RDLauncher extends javax.swing.JFrame {
             Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Arch boolean
-        boolean amd64 = System.getProperty("os.arch").startsWith("amd64");
-        if(amd64) {
-            // Download liblwjgl64 lib
+        // Downloading libs
+        
+        // Boolean
+        boolean system = System.getProperty("os.name").startsWith("Windows");
+        
+        if(system) {
+            // Windows code
+            
+            // LWJGL
+            // Download lwjgl dll
             try {
-                URL launchwrapper = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-so-x64/liblwjgl64.so");
-                ReadableByteChannel dwn0 = Channels.newChannel(launchwrapper.openStream());
+                URL lwjgldll = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-dll-i386-x64/lwjgl.dll");
+                ReadableByteChannel dwn0 = Channels.newChannel(lwjgldll.openStream());
+                FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "lwjgl.dll");
+                dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
+                dwn0.close();
+                dwn01.close();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // Download lwjgl64 dll
+            try {
+                URL lwjgldll64 = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-dll-i386-x64/lwjgl64.dll");
+                ReadableByteChannel dwn0 = Channels.newChannel(lwjgldll64.openStream());
+                FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "lwjgl64.dll");
+                dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
+                dwn0.close();
+                dwn01.close();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // JINPUT
+            // Download jinput-dx8 dll
+            try {
+                URL jinputlib = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-dll-i386-x64/jinput-dx8.dll");
+                ReadableByteChannel dwn0 = Channels.newChannel(jinputlib.openStream());
+                FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "jinput-dx8.dll");
+                dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
+                dwn0.close();
+                dwn01.close();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // Download jinput-dx8_64 dll
+            try {
+                URL jinputlib = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-dll-i386-x64/jinput-dx8_64.dll");
+                ReadableByteChannel dwn0 = Channels.newChannel(jinputlib.openStream());
+                FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "jinput-dx8_64.dll");
+                dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
+                dwn0.close();
+                dwn01.close();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // Download jinput-raw dll
+            try {
+                URL jinputlib = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-dll-i386-x64/jinput-raw.dll");
+                ReadableByteChannel dwn0 = Channels.newChannel(jinputlib.openStream());
+                FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "jinput-raw.dll");
+                dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
+                dwn0.close();
+                dwn01.close();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // Download jinput-raw_64 dll
+            try {
+                URL jinputlib = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-dll-i386-x64/jinput-raw_64.dll");
+                ReadableByteChannel dwn0 = Channels.newChannel(jinputlib.openStream());
+                FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "jinput-raw_64.dll");
+                dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
+                dwn0.close();
+                dwn01.close();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            // Download jinput-wintab dll
+            try {
+                URL jinputlib = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-dll-i386-x64/jinput-wintab.dll");
+                ReadableByteChannel dwn0 = Channels.newChannel(jinputlib.openStream());
+                FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "jinput-wintab.dll");
+                dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
+                dwn0.close();
+                dwn01.close();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            // Linux code
+            
+            // Download liblwjgl lib
+            try {
+                URL lwjgllib = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-so-x64/liblwjgl64.so");
+                ReadableByteChannel dwn0 = Channels.newChannel(lwjgllib.openStream());
                 FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "liblwjgl64.so");
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
@@ -491,8 +636,8 @@ public class RDLauncher extends javax.swing.JFrame {
             
             // Download libjinput-linux64 lib
             try {
-                URL launchwrapper = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-so-x64/libjinput-linux64.so");
-                ReadableByteChannel dwn0 = Channels.newChannel(launchwrapper.openStream());
+                URL jinputlib = new URL("https://github.com/SanyaSho/rd-launcher/releases/download/rd-lwjgl-so-x64/libjinput-linux64.so");
+                ReadableByteChannel dwn0 = Channels.newChannel(jinputlib.openStream());
                 FileOutputStream dwn01 = new FileOutputStream(userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + separator + "libjinput-linux64.so");
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
@@ -504,8 +649,6 @@ public class RDLauncher extends javax.swing.JFrame {
                 } catch (IOException ex) {
                     Logger.getLogger(RDLauncher.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else {
-            System.out.println("Библиотеки для i386 ещё не собраны, пожалуйста, обновите вашу систему до amd64 или попробуйте позже.");
         }
         
         // Boolean
@@ -513,36 +656,26 @@ public class RDLauncher extends javax.swing.JFrame {
         
         // Проверяем тип системы
         if(isWindows) {
+            String launchwin = cfgfile.getProperty("java") + " -Xmx" + cfgfile.getProperty("memory") + " -Djava.library.path=" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + " -cp " + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "launchwrapper-1.6.jar;" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "rd-132211.jar;" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "asm-all-5.2.jar;" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "jopt-simple-5.0.4.jar;" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "lwjgl.jar;" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "lwjgl_util.jar;" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "jinput.jar;" + " com.mojang.rubydung.RubyDung " + username + " --gameDir " + userdir + separator + ".rd-132211";
             Runtime rt = Runtime.getRuntime();
             try {
-                Process p = rt.exec(cfgfile.getProperty("java") + "java.exe" + " -version");
-                String response = ProcessOutput(p);
+                Process p = rt.exec(launchwin);
             } catch(Exception ex) {
                 ex.printStackTrace();
             }
+            System.out.println(launchwin);
         } else {
-            String launch = cfgfile.getProperty("java") + " -Xmx" + cfgfile.getProperty("memory") + " -Djava.library.path=" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + " -cp " + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "launchwrapper-1.6.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "rd-132211.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "asm-all-5.2.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "jopt-simple-5.0.4.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "lwjgl.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "lwjgl_util.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "jinput.jar:" + " com.mojang.rubydung.RubyDung " + username + " --gameDir " + userdir + separator + ".rd-132211";
+            String launchlin = cfgfile.getProperty("java") + " -Xmx" + cfgfile.getProperty("memory") + " -Djava.library.path=" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "natives" + " -cp " + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "launchwrapper-1.6.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "rd-132211.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "asm-all-5.2.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "jopt-simple-5.0.4.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "lwjgl.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "lwjgl_util.jar:" + userdir + separator + ".rd-132211" + separator + "libraries" + separator + "jinput.jar:" + " com.mojang.rubydung.RubyDung " + username + " --gameDir " + userdir + separator + ".rd-132211";
             Runtime rt = Runtime.getRuntime();
             try {
-                Process p = rt.exec(launch);
-                String response = ProcessOutput(p);
+                Process p = rt.exec(launchlin);
             } catch(Exception ex) {
                 ex.printStackTrace();
             }
-            System.out.println(launch);
+            System.out.println(launchlin);
         }
     }//GEN-LAST:event_playActionPerformed
 
-    private String ProcessOutput(Process p) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String response = "";
-        String line;
-        while ((line = reader.readLine()) != null) {
-            response += line+"\r\n";
-        }
-        reader.close();
-        return response;
-    }
     /**
      * @param args the command line arguments
      */
