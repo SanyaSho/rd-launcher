@@ -127,6 +127,10 @@
                                       <Component id="memory" alignment="1" pref="222" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="debug" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -145,7 +149,9 @@
                               <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="memory" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="197" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="debug" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="172" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="save" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="reload" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -192,6 +198,9 @@
                       </StringArray>
                     </Property>
                   </Properties>
+                  <AccessibilityProperties>
+                    <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value="&#x412;&#x435;&#x434;&#x435;&#x43b;&#x430;&#x43d;&#x43d;&#x430;&#x44f; &#x43e;&#x43f;&#x435;&#x440;&#x430;&#x442;&#x438;&#x432;&#x43d;&#x430;&#x44f; &#x43f;&#x430;&#x43c;&#x44f;&#x442;&#x44c;."/>
+                  </AccessibilityProperties>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
@@ -202,6 +211,17 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="javapath">
+                  <AccessibilityProperties>
+                    <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value="&#x41f;&#x443;&#x442;&#x44c; &#x43a; Java. &#x41c;&#x43e;&#x436;&#x43d;&#x43e; &#x443;&#x441;&#x442;&#x430;&#x43d;&#x43e;&#x432;&#x438;&#x442;&#x44c; &#x43e;&#x442; 6 &#x434;&#x43e; 8 &#x432;&#x435;&#x440;&#x441;&#x438;&#x438; Java. &#x422;&#x430;&#x43a;&#x436;&#x435;, &#x432;&#x43c;&#x435;&#x441;&#x442;&#x43e; JRE &#x43c;&#x43e;&#x436;&#x43d;&#x43e; &#x438;&#x441;&#x43f;&#x43e;&#x43b;&#x44c;&#x437;&#x43e;&#x432;&#x430;&#x442;&#x44c; JDK."/>
+                  </AccessibilityProperties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="debug">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="&#x41a;&#x43e;&#x43d;&#x441;&#x43e;&#x43b;&#x44c;"/>
+                  </Properties>
+                  <AccessibilityProperties>
+                    <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value="&#x412;&#x44b;&#x432;&#x43e;&#x434;&#x438;&#x442; &#x432; &#x43a;&#x43e;&#x43d;&#x441;&#x43e;&#x43b;&#x44c; &#x43a;&#x43e;&#x43c;&#x430;&#x43d;&#x434;&#x443; &#x437;&#x430;&#x43f;&#x443;&#x441;&#x43a;&#x430; &#x438;&#x433;&#x440;&#x44b;. &#x415;&#x441;&#x43b;&#x438; &#x447;&#x442;&#x43e;-&#x442;&#x43e; &#x432;&#x44b;&#x441;&#x442;&#x430;&#x432;&#x43b;&#x435;&#x43d;&#x43e; &#x43d;&#x435; &#x43f;&#x440;&#x430;&#x432;&#x438;&#x43b;&#x44c;&#x43d;&#x43e; &#x438;&#x43b;&#x438; &#x438;&#x433;&#x440;&#x430; &#x43d;&#x435; &#x437;&#x430;&#x43f;&#x443;&#x441;&#x43a;&#x430;&#x435;&#x442;&#x441;&#x44f;, &#x442;&#x43e; &#x44d;&#x442;&#x43e; &#x43f;&#x43e;&#x43b;&#x435;&#x437;&#x43d;&#x43e;."/>
+                  </AccessibilityProperties>
                 </Component>
               </SubComponents>
             </Container>
