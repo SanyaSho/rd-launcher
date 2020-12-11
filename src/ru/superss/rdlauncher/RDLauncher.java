@@ -239,7 +239,7 @@ public class RDLauncher extends javax.swing.JFrame {
             updatespane0.setPage("https://sanyasho.github.io/launcher/index.html");
         } catch(IOException ex) {
             updatespane0.setText("404. Ошибка загрузки веб-страницы. Пожалуйста, попробуйте позже, или напишите создателю лаунчера.");
-            System.err.println("404. Ошибка загрузки веб-страницы. Пожалуйста, попробуйте позже, или напишите создателю лаунчера.");
+            log.log(Level.INFO, "404. Ошибка загрузки веб-страницы. Пожалуйста, попробуйте позже, или напишите создателю лаунчера.");
         }
         
         // Пробуем установить имя пользователя системы
@@ -254,7 +254,7 @@ public class RDLauncher extends javax.swing.JFrame {
         
         if (!gamedirrectory.exists()) {
             
-            System.out.println("Создание дирректории игры: " + gamedirrectory);
+            log.log(Level.INFO, "Создание дирректории игры: " + gamedirrectory);
             
             boolean result = false;
             try {
@@ -263,7 +263,7 @@ public class RDLauncher extends javax.swing.JFrame {
             } catch(SecurityException se) {
                 log.log(Level.INFO, se.toString());
             } if(result) {
-                System.out.println("Дирректория игры создана: " + gamedirrectory);
+                log.log(Level.INFO, "Дирректория игры создана: " + gamedirrectory);
             }
             
         }
@@ -273,7 +273,7 @@ public class RDLauncher extends javax.swing.JFrame {
         
         if (!config.exists()) {
             
-            System.out.println("Создание конфига лаунчера: " + config);
+            log.log(Level.INFO, "Создание конфига лаунчера: " + config);
             
             boolean result = false;
             
@@ -285,7 +285,7 @@ public class RDLauncher extends javax.swing.JFrame {
             } catch (IOException ex) {
                 log.log(Level.INFO, ex.toString());
             } if(result) {
-                System.out.println("Дирректория конфига лаунчера: " + config);
+                log.log(Level.INFO, "Дирректория конфига лаунчера: " + config);
             }
             
         }
