@@ -393,6 +393,7 @@ public class RDLauncher extends javax.swing.JFrame {
         reload.setEnabled(false);
         debug.setEnabled(false);
         mainpane0.setEnabled(false);
+        menurdl.setEnabled(false);
         
         JOptionPane.showMessageDialog(rootPane, "Пожалуйста, перезагрузите лаунчер. / Please, reload a launcher.", "Внимание! / Warning!", JOptionPane.ERROR_MESSAGE);
         log.log(Level.INFO, "Пожалуйста, перезагрузите лаунчер. / Please, restart a launcher.", "Внимание! / Warning!");
