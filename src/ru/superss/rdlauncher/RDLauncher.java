@@ -17,16 +17,24 @@
  */
 package ru.superss.rdlauncher;
 
+import java.awt.Font;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Properties;
+import java.util.logging.Level;
+import static java.util.logging.Level.INFO;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -35,11 +43,11 @@ import javax.swing.JOptionPane;
  */
 public class RDLauncher extends javax.swing.JFrame {
 
-    public static String workdir = System.getProperty("user.dir");
     public static String username = System.getProperty("user.name");
     public static String userdir = System.getProperty("user.dir");
     public static String separator = System.getProperty("file.separator");
     public static String cfgname = "rdlauncher.properties";
+    public static Logger log = Logger.getLogger("Main");
         
     Properties cfgfile;
     
@@ -51,22 +59,23 @@ public class RDLauncher extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        MAIN = new javax.swing.JPanel();
         mainpane0 = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         updatespane0 = new javax.swing.JEditorPane();
         jPanel2 = new javax.swing.JPanel();
         save = new javax.swing.JButton();
         reload = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        memory = new javax.swing.JComboBox();
-        jLabel4 = new javax.swing.JLabel();
+        mem = new javax.swing.JLabel();
+        memory = new javax.swing.JComboBox<>();
+        jpath = new javax.swing.JLabel();
         javapath = new javax.swing.JTextField();
         debug = new javax.swing.JCheckBox();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        manual = new javax.swing.JEditorPane();
         play = new javax.swing.JButton();
         hello = new javax.swing.JLabel();
+        menu0 = new javax.swing.JMenuBar();
+        menurdl = new javax.swing.JMenu();
+        enablemenu = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("RDLauncher");
@@ -77,7 +86,7 @@ public class RDLauncher extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setToolTipText("");
+        MAIN.setToolTipText("");
 
         updatespane0.setEditable(false);
         jScrollPane1.setViewportView(updatespane0);
@@ -98,13 +107,13 @@ public class RDLauncher extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Оперативная память:");
+        mem.setText("Оперативная память:");
 
-        memory.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "64M", "128M", "256M", "512M", "1024M", "2048M", "3072M", "4096M" }));
+        memory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "64M", "128M", "256M", "512M", "1024M", "2048M", "3072M", "4096M" }));
 
-        jLabel4.setText("Путь к Java:");
+        jpath.setText("Путь к Java:");
 
-        debug.setText("Консоль");
+        debug.setText("Консоль (GNU/Linux)");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -119,8 +128,8 @@ public class RDLauncher extends javax.swing.JFrame {
                         .addComponent(reload))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel4))
+                            .addComponent(mem)
+                            .addComponent(jpath))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(javapath)
@@ -135,11 +144,11 @@ public class RDLauncher extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
+                    .addComponent(jpath)
                     .addComponent(javapath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(mem)
                     .addComponent(memory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(debug)
@@ -156,10 +165,6 @@ public class RDLauncher extends javax.swing.JFrame {
 
         mainpane0.addTab("Настройки лаунчера и игры", jPanel2);
 
-        jScrollPane3.setViewportView(manual);
-
-        mainpane0.addTab("Справка", jScrollPane3);
-
         play.setText("Играть в rd-132211");
         play.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -169,38 +174,51 @@ public class RDLauncher extends javax.swing.JFrame {
 
         hello.setText("Привет, example");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout MAINLayout = new javax.swing.GroupLayout(MAIN);
+        MAIN.setLayout(MAINLayout);
+        MAINLayout.setHorizontalGroup(
+            MAINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(mainpane0)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(MAINLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(play, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(hello, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        MAINLayout.setVerticalGroup(
+            MAINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MAINLayout.createSequentialGroup()
                 .addComponent(mainpane0, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(MAINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(play)
                     .addComponent(hello))
-                .addGap(0, 12, Short.MAX_VALUE))
+                .addGap(0, 8, Short.MAX_VALUE))
         );
+
+        menurdl.setText("RDLauncher");
+
+        enablemenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        enablemenu.setSelected(true);
+        enablemenu.setText("Включить меню");
+        menurdl.add(enablemenu);
+
+        menu0.add(menurdl);
+
+        setJMenuBar(menu0);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(MAIN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(MAIN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -212,7 +230,9 @@ public class RDLauncher extends javax.swing.JFrame {
         cfgfile = new Properties();
         try {
             cfgfile.load(new FileInputStream(userdir + separator + ".rd-132211" + separator + cfgname));
-        } catch(IOException ex) {}
+        } catch(IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Пробуем загрузить вкладку новостей
         try {
@@ -240,7 +260,9 @@ public class RDLauncher extends javax.swing.JFrame {
             try {
                 gamedirrectory.mkdir();
                 result = true;
-            } catch(SecurityException se) {} if(result) {
+            } catch(SecurityException se) {
+                log.log(Level.INFO, se.toString());
+            } if(result) {
                 System.out.println("Дирректория игры создана: " + gamedirrectory);
             }
             
@@ -258,7 +280,11 @@ public class RDLauncher extends javax.swing.JFrame {
             try {
                 config.createNewFile();
                 result = true;
-            } catch(SecurityException se) {} catch (IOException ex) {} if(result) {
+            } catch(SecurityException se) {
+                log.log(Level.INFO, se.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            } if(result) {
                 System.out.println("Дирректория конфига лаунчера: " + config);
             }
             
@@ -283,20 +309,14 @@ public class RDLauncher extends javax.swing.JFrame {
         boolean mac = System.getProperty("os.name").startsWith("Mac");
         if(mac) {
             JOptionPane.showMessageDialog(rootPane, "MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.", "Ошибка / Error", JOptionPane.ERROR_MESSAGE);
-            System.out.println("MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.");
+            log.log(Level.WARNING, "MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.");
         } 
         
         boolean osx = System.getProperty("os.name").startsWith("OS");
-        if(mac) {
+        if(osx) {
             JOptionPane.showMessageDialog(rootPane, "MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.", "Ошибка / Error", JOptionPane.ERROR_MESSAGE);
-            System.out.println("MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.");
+            log.log(Level.WARNING, "MacOS не поддерживается, прекратите есть дерьмо или используйте другой лаунчер. / MacOS is not supported, please, stop eating shit or use another launcher.");
         } 
-        
-        // Пробуем загрузить файл справки
-        URL manualurl = RDLauncher.class.getResource("manual.html");
-        try {
-            manual.setPage(manualurl);
-        } catch(IOException ex) {}
         
         // Ставим флажок
         if(cfgfile.getProperty("debug").startsWith("true")) {
@@ -305,6 +325,27 @@ public class RDLauncher extends javax.swing.JFrame {
             debug.setSelected(false);
         }
         
+        // Кнопка перезагрузить
+        if(cfgfile.getProperty("debug").startsWith("true")) {
+            reload.setVisible(true);
+        } else {
+            reload.setVisible(false);
+        }
+        
+        // Панель меню
+        if(cfgfile.getProperty("menu").startsWith("true")) {
+            menu0.setVisible(true);
+        } else {
+            menu0.setVisible(false);
+        }
+        
+        // Консоль
+        boolean consolecheck = System.getProperty("os.name").startsWith("Windows");
+        if(consolecheck) {
+            debug.setVisible(false);
+        } else {
+            debug.setVisible(true);
+        }
     }//GEN-LAST:event_openwindow
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
@@ -313,7 +354,9 @@ public class RDLauncher extends javax.swing.JFrame {
         cfgfile = new Properties();
         try {
             cfgfile.load(new FileInputStream(userdir + separator + ".rd-132211" + separator + cfgname));
-        } catch(IOException ex) {}
+        } catch(IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Проверяем флажок debug
         if(debug.isSelected()) {
@@ -322,14 +365,37 @@ public class RDLauncher extends javax.swing.JFrame {
             System.setProperty("debug", "false");
         }
         
+        // Проверяем флажок меню
+        if(enablemenu.isSelected()) {
+            System.setProperty("menu", "true");
+        } else {
+            System.setProperty("menu", "false");
+        }
+        
         // Записываем конфиг
         Properties cfg = new Properties();
         try {
             cfg.setProperty("java", javapath.getText());
             cfg.setProperty("memory", memory.getSelectedItem().toString());
-            Object setProperty = cfg.setProperty("debug", System.getProperty("debug"));
+            Object setProperty0 = cfg.setProperty("debug", System.getProperty("debug"));
+            Object setProperty1 = cfg.setProperty("menu", System.getProperty("menu"));
             cfg.store(new FileOutputStream(userdir + separator + ".rd-132211" + separator + cfgname), null);
-        } catch (FileNotFoundException ex) {} catch (IOException ex) {}
+        } catch (FileNotFoundException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
+        
+        // Просим перезагрузить лаунчер
+        play.setEnabled(false);
+        memory.setEnabled(false);
+        javapath.setEnabled(false);
+        reload.setEnabled(false);
+        debug.setEnabled(false);
+        mainpane0.setEnabled(false);
+        
+        JOptionPane.showMessageDialog(rootPane, "Пожалуйста, перезагрузите лаунчер. / Please, reload a launcher.", "Внимание! / Warning!", JOptionPane.ERROR_MESSAGE);
+        log.log(Level.INFO, "Пожалуйста, перезагрузите лаунчер. / Please, restart a launcher.", "Внимание! / Warning!");
         
     }//GEN-LAST:event_saveActionPerformed
 
@@ -339,7 +405,9 @@ public class RDLauncher extends javax.swing.JFrame {
         cfgfile = new Properties();
         try {
             cfgfile.load(new FileInputStream(userdir + separator + ".rd-132211" + separator + cfgname));
-        } catch(IOException ex) {}
+        } catch(IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Определяем тип системы и выставляем или /bin/java или \bin\java.exe
         boolean javaexec = System.getProperty("os.name").startsWith("Windows");
@@ -376,7 +444,9 @@ public class RDLauncher extends javax.swing.JFrame {
             try {
                 libsdir.mkdir();
                 result = true;
-            } catch(SecurityException se) {} if(result) {}
+            } catch(SecurityException se) {
+                log.log(Level.INFO, se.toString());
+            } if(result) {}
         }
         
         // Создаём дирректирию для .so или .dll
@@ -386,7 +456,9 @@ public class RDLauncher extends javax.swing.JFrame {
             try {
                 natdir.mkdir();
                 result = true;
-            } catch(SecurityException se) {} if(result) {}
+            } catch(SecurityException se) {
+                log.log(Level.INFO, se.toString());
+            } if(result) {}
         }
         
         // Скачиваем необходимые файлы
@@ -399,7 +471,14 @@ public class RDLauncher extends javax.swing.JFrame {
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
             dwn01.close();
-        } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+            log.log(Level.INFO, "Скачивание: launchwrapper-1.6.jar");
+        } catch (MalformedURLException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (FileNotFoundException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Скачиваем rd-132211
         try {
@@ -409,7 +488,14 @@ public class RDLauncher extends javax.swing.JFrame {
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
             dwn01.close();
-        } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+            log.log(Level.INFO, "Скачивание: rd-132211.jar");
+        } catch (MalformedURLException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (FileNotFoundException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Скачиваем ASM-all версии 5.2
         try {
@@ -419,7 +505,14 @@ public class RDLauncher extends javax.swing.JFrame {
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
             dwn01.close();
-        } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+            log.log(Level.INFO, "Скачивание: asm-all-5.2.jar");
+        } catch (MalformedURLException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (FileNotFoundException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Скачиваем JOpt-simple версии 5.0.4
         try {
@@ -429,7 +522,14 @@ public class RDLauncher extends javax.swing.JFrame {
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
             dwn01.close();
-        } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+            log.log(Level.INFO, "Скачивание: jopt-simple-5.0.4.jar");
+        } catch (MalformedURLException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (FileNotFoundException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Скачиваем LWJGL2
         try {
@@ -439,7 +539,14 @@ public class RDLauncher extends javax.swing.JFrame {
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
             dwn01.close();
-        } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+            log.log(Level.INFO, "Скачивание: lwjgl.jar");
+        } catch (MalformedURLException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (FileNotFoundException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Скачиваем LWJGL2 Util
         try {
@@ -449,7 +556,14 @@ public class RDLauncher extends javax.swing.JFrame {
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
             dwn01.close();
-        } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+            log.log(Level.INFO, "Скачивание: lwjgl_util.jar");
+        } catch (MalformedURLException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (FileNotFoundException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Скачиваем JInput
         try {
@@ -459,7 +573,14 @@ public class RDLauncher extends javax.swing.JFrame {
             dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
             dwn0.close();
             dwn01.close();
-        } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+            log.log(Level.INFO, "Скачивание: jinput.jar");
+        } catch (MalformedURLException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (FileNotFoundException ex) {
+            log.log(Level.INFO, ex.toString());
+        } catch (IOException ex) {
+            log.log(Level.INFO, ex.toString());
+        }
         
         // Скачиваем .so или .dll
         
@@ -478,7 +599,14 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: lwjgl.dll");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
             
             // Скачиваем dll для lwjgl64
             try {
@@ -488,7 +616,14 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: lwjgl64.dll");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
             
             // JINPUT
             // Скачиваем dll для jinput-dx8
@@ -499,7 +634,14 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: jinput-dx8.dll");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
             
             // Скачиваем dll для jinput-dx8_64
             try {
@@ -509,7 +651,14 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: jinput-dx8_64.dll");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
             
             // Скачиваем dll для jinput-raw
             try {
@@ -519,7 +668,14 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: jinput-raw.dll");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
             
             // Скачиваем dll для jinput-raw_64
             try {
@@ -529,7 +685,14 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: jinput-raw_64.dll");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
             
             // Скачиваем dll для jinput-wintab
             try {
@@ -539,7 +702,14 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: jinput-wintab.dll");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
         } else {
             // Linux-код
             
@@ -551,7 +721,14 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: liblwjgl.so");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
             
             // Скачиваем libjinput-linux64.so
             try {
@@ -561,12 +738,20 @@ public class RDLauncher extends javax.swing.JFrame {
                 dwn01.getChannel().transferFrom(dwn0, 0, Long.MAX_VALUE);
                 dwn0.close();
                 dwn01.close();
-            } catch (MalformedURLException ex) {} catch (FileNotFoundException ex) {} catch (IOException ex) {}
+                log.log(Level.INFO, "Скачивание: lib-jinput64.so");
+            } catch (MalformedURLException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (FileNotFoundException ex) {
+                log.log(Level.INFO, ex.toString());
+            } catch (IOException ex) {
+                log.log(Level.INFO, ex.toString());
+            }
         }
         
         // Определяем тип системы
         boolean isWindows = System.getProperty("os.name").startsWith("Windows");
         
+        // Проверяем дебаг-флажлок
         if(debug.isSelected()) {
             
             System.setProperty("debug", "true");
@@ -579,13 +764,15 @@ public class RDLauncher extends javax.swing.JFrame {
                 Runtime rt = Runtime.getRuntime();
                 try {
                     Process launch = rt.exec(launchwin);
-                } catch(IOException ex) {}
+                } catch(IOException ex) {
+                    log.log(Level.INFO, ex.toString());
+                }
                 
                 // Выводим комадну запуска (отладка)
                 if(cfgfile.getProperty("debug").startsWith("true")) {
-                    System.out.println(launchwin);
+                    log.log(Level.INFO, launchwin);
                 } else {
-                    System.out.println("Функция отладки выключена.");
+                    log.log(Level.WARNING, "Функция отладки выключена.");
                 }
             
             } else {
@@ -595,13 +782,15 @@ public class RDLauncher extends javax.swing.JFrame {
                 Runtime rt = Runtime.getRuntime();
                 try {
                    Process launch = rt.exec(launchlin);
-                } catch(IOException ex) {}
+                } catch(IOException ex) {
+                    log.log(Level.INFO, ex.toString());
+                }
             
                 // Выводим комадну запуска (отладка)
                 if(cfgfile.getProperty("debug").startsWith("true")) {
-                    System.out.println(launchlin);
+                    log.log(Level.INFO, launchlin);
                 } else {
-                    System.out.println("Функция отладки выключена.");
+                    log.log(Level.WARNING, "Функция отладки выключена.");
                 }
             }
         } else {
@@ -616,13 +805,15 @@ public class RDLauncher extends javax.swing.JFrame {
                 Runtime rt = Runtime.getRuntime();
                 try {
                     Process launch = rt.exec(launchwin);
-                } catch(IOException ex) {}
+                } catch(IOException ex) {
+                    log.log(Level.INFO, ex.toString());
+                }
                 
                 // Выводим комадну запуска (отладка)
                 if(cfgfile.getProperty("debug").startsWith("true")) {
-                    System.out.println(launchwin);
+                    log.log(Level.INFO, launchwin);
                 } else {
-                    System.out.println("Функция отладки выключена.");
+                    log.log(Level.WARNING, "Функция отладки выключена.");
                 }
             
             } else {
@@ -632,13 +823,15 @@ public class RDLauncher extends javax.swing.JFrame {
                 Runtime rt = Runtime.getRuntime();
                 try {
                    Process launch = rt.exec(launchlin);
-                } catch(IOException ex) {}
+                } catch(IOException ex) {
+                    log.log(Level.INFO, ex.toString());
+                }
             
                 // Выводим комадну запуска (отладка)
                 if(cfgfile.getProperty("debug").startsWith("true")) {
-                    System.out.println(launchlin);
+                    log.log(Level.INFO, launchlin);
                 } else {
-                    System.out.println("Функция отладки выключена.");
+                    log.log(Level.WARNING, "Функция отладки выключена.");
                 }
             }
         }
@@ -653,18 +846,19 @@ public class RDLauncher extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel MAIN;
     private javax.swing.JCheckBox debug;
+    private javax.swing.JCheckBoxMenuItem enablemenu;
     private javax.swing.JLabel hello;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextField javapath;
+    private javax.swing.JLabel jpath;
     private javax.swing.JTabbedPane mainpane0;
-    private javax.swing.JEditorPane manual;
-    private javax.swing.JComboBox memory;
+    private javax.swing.JLabel mem;
+    private javax.swing.JComboBox<String> memory;
+    private javax.swing.JMenuBar menu0;
+    private javax.swing.JMenu menurdl;
     private javax.swing.JButton play;
     private javax.swing.JButton reload;
     private javax.swing.JButton save;
