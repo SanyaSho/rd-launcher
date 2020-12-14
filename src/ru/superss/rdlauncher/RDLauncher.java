@@ -17,24 +17,19 @@
  */
 package ru.superss.rdlauncher;
 
-import java.awt.Font;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Properties;
 import java.util.logging.Level;
-import static java.util.logging.Level.INFO;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -47,7 +42,7 @@ public class RDLauncher extends javax.swing.JFrame {
     public static String userdir = System.getProperty("user.dir");
     public static String separator = System.getProperty("file.separator");
     public static String cfgname = "rdlauncher.properties";
-    public static Logger log = Logger.getLogger("Main");
+    public static final Logger log = Logger.getLogger("Main");
         
     Properties cfgfile;
     
@@ -71,6 +66,7 @@ public class RDLauncher extends javax.swing.JFrame {
         jpath = new javax.swing.JLabel();
         javapath = new javax.swing.JTextField();
         debug = new javax.swing.JCheckBox();
+        jSeparator1 = new javax.swing.JSeparator();
         play = new javax.swing.JButton();
         hello = new javax.swing.JLabel();
         menu0 = new javax.swing.JMenuBar();
@@ -79,6 +75,7 @@ public class RDLauncher extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("RDLauncher");
+        setIconImage(new ImageIcon(getClass().getResource("/rdlresources/app-icon.png")).getImage());
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
@@ -93,25 +90,25 @@ public class RDLauncher extends javax.swing.JFrame {
 
         mainpane0.addTab("Новости лаунчера", jScrollPane1);
 
-        save.setText("Сохранить");
+        save.setText("Сохранить настройки");
         save.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveActionPerformed(evt);
             }
         });
 
-        reload.setText("Перезагрузить");
+        reload.setText("Перезагрузить конфиг");
         reload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reloadActionPerformed(evt);
             }
         });
 
-        mem.setText("Оперативная память:");
+        mem.setText("Память:");
 
         memory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "64M", "128M", "256M", "512M", "1024M", "2048M", "3072M", "4096M" }));
 
-        jpath.setText("Путь к Java:");
+        jpath.setText("Java:");
 
         debug.setText("Консоль (GNU/Linux)");
 
@@ -119,6 +116,7 @@ public class RDLauncher extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSeparator1)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -130,7 +128,7 @@ public class RDLauncher extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(mem)
                             .addComponent(jpath))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 258, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(javapath)
                             .addComponent(memory, javax.swing.GroupLayout.Alignment.TRAILING, 0, 222, Short.MAX_VALUE)))
@@ -150,9 +148,11 @@ public class RDLauncher extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(mem)
                     .addComponent(memory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                 .addComponent(debug)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(save)
                     .addComponent(reload))
@@ -194,7 +194,7 @@ public class RDLauncher extends javax.swing.JFrame {
                 .addGroup(MAINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(play)
                     .addComponent(hello))
-                .addGap(0, 8, Short.MAX_VALUE))
+                .addGap(0, 14, Short.MAX_VALUE))
         );
 
         menurdl.setText("RDLauncher");
@@ -216,9 +216,7 @@ public class RDLauncher extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(MAIN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(MAIN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -853,6 +851,7 @@ public class RDLauncher extends javax.swing.JFrame {
     private javax.swing.JLabel hello;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField javapath;
     private javax.swing.JLabel jpath;
     private javax.swing.JTabbedPane mainpane0;
